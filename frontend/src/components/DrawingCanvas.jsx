@@ -8,12 +8,17 @@ const DrawingCanvas = ({ socket, roomId, color, width }) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    
+    // Set canvas size to match its display size
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
     };
+    
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+
     const handleDraw = ({ x0, y0, x1, y1, color, width }) => {
       drawLine(ctx, x0, y0, x1, y1, color, width);
     };
@@ -50,15 +55,27 @@ const DrawingCanvas = ({ socket, roomId, color, width }) => {
     ctx.stroke();
   };
 
+  const getCanvasCoordinates = (clientX, clientY) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    };
+  };
+
   const handleMouseDown = (e) => {
+    const { x, y } = getCanvasCoordinates(e.clientX, e.clientY);
     isDrawingRef.current = true;
-    lastPositionRef.current = { x: e.clientX, y: e.clientY };
+    lastPositionRef.current = { x, y };
   };
 
   const handleMouseMove = (e) => {
     if (!isDrawingRef.current) return;
     
-    const newPosition = { x: e.clientX, y: e.clientY };
+    const { x, y } = getCanvasCoordinates(e.clientX, e.clientY);
+    const newPosition = { x, y };
+    
     socket.emit('draw-move', {
       roomId,
       x0: lastPositionRef.current.x,
@@ -68,6 +85,7 @@ const DrawingCanvas = ({ socket, roomId, color, width }) => {
       color,
       width
     });
+    
     drawLine(
       canvasRef.current.getContext('2d'),
       lastPositionRef.current.x,
@@ -92,7 +110,7 @@ const DrawingCanvas = ({ socket, roomId, color, width }) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="absolute top-0 left-0"
+      className="absolute top-0 left-0 w-full h-full"
     />
   );
 };

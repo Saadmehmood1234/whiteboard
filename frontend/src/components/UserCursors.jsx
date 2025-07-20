@@ -14,7 +14,7 @@ const UserCursors = ({ socket, roomId, users }) => {
 
     const handleCursorUpdate = (updatedUsers) => {
       setCursors(updatedUsers.reduce((acc, user) => {
-        if (user.id !== socket.id) { // Don't show own cursor
+        if (user.id !== socket.id) { 
           acc[user.id] = user;
         }
         return acc;

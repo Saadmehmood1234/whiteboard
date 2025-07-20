@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:5000');
+import socket from '../socket';
 
 const ChatRoom = () => {
   const [message, setMessage] = useState('');
@@ -26,18 +24,18 @@ const ChatRoom = () => {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto text-white">
+    <div className="p-4 z-10 max-w-md mx-auto text-white">
       <h2 className="text-xl font-bold mb-4">Chat Room</h2>
-      <div className="bg-gray-800 p-3 rounded h-64 overflow-y-auto mb-4">
+      <div className="bg-gray-200 p-3 rounded h-64 overflow-y-auto mb-4">
         {chat.map((msg, idx) => (
           <p key={idx}>{msg}</p>
         ))}
       </div>
-      <div className="flex">
+      <div className="flex bg-yellow-200">
         <input
           type="text"
-          value={message}
-          className="flex-1 p-2 text-black"
+         
+          className="flex-1 bg-gray-300 border-2 border-red-400 outline-1 p-2 text-black"
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
