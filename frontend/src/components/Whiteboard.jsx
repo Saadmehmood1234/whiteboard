@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import DrawingCanvas from "./DrawingCanvas";
 import Toolbar from "./Toolbar";
 import UserCursors from "./UserCursors";
