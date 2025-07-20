@@ -12,12 +12,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", 
+    origin: "https://whiteboard-ecru-kappa.vercel.app/", 
     methods: ["GET", "POST"]
   }
 });
-
-// Track connected users per room
 const roomUsers = {};
 io.on("connection", (socket) => {
   console.log("User Connected:", socket.id);
@@ -25,13 +23,10 @@ io.on("connection", (socket) => {
   socket.on("join-room", async (roomId) => {
     try {
       await mongoose.connect(process.env.MONGO_URI);
-      
-      // Initialize room if it doesn't exist
+    
       if (!roomUsers[roomId]) {
         roomUsers[roomId] = [];
       }
-
-      // Add user to room
       const user = {
         id: socket.id,
         color: `hsl(${Math.random() * 360}, 100%, 50%)`,
@@ -42,26 +37,20 @@ io.on("connection", (socket) => {
       
       socket.join(roomId);
       console.log(`🚪 User ${socket.id} joined room ${roomId}`);
-
-      // Load existing drawing data
       const room = await Room.findOne({ roomId });
       if (room?.drawingData?.length > 0) {
         socket.emit("load-drawing-data", room.drawingData);
       }
 
-      // Notify all users in room about new connection
       io.to(roomId).emit("user-connected", roomUsers[roomId]);
     } catch (err) {
-      console.error("❌ Error joining room:", err);
+      console.error(" Error joining room:", err);
     }
   });
 
-  // Handle drawing events
   socket.on("draw-move", ({ roomId, ...drawingData }) => {
-    // Broadcast to other users in the room
     socket.to(roomId).emit("draw-move", drawingData);
-    
-    // Save to database
+
     Room.findOneAndUpdate(
       { roomId },
       { 
@@ -72,7 +61,6 @@ io.on("connection", (socket) => {
     ).catch(err => console.error("Error saving drawing:", err));
   });
 
-  // Handle clear canvas
   socket.on("clear-canvas", ({ roomId }) => {
     socket.to(roomId).emit("clear-canvas");
     Room.findOneAndUpdate(
@@ -85,8 +73,6 @@ io.on("connection", (socket) => {
       }
     ).catch(err => console.error("Error clearing canvas:", err));
   });
-
-  // Handle cursor movement
   socket.on("cursor-move", ({ roomId, x, y }) => {
     if (roomUsers[roomId]) {
       const user = roomUsers[roomId].find(u => u.id === socket.id);
@@ -98,11 +84,8 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Handle disconnection
   socket.on("disconnect", () => {
-    console.log("❎ User Disconnected:", socket.id);
-    
-    // Remove user from all rooms
+    console.log(" User Disconnected:", socket.id);
     Object.keys(roomUsers).forEach(roomId => {
       roomUsers[roomId] = roomUsers[roomId].filter(user => user.id !== socket.id);
       io.to(roomId).emit("user-disconnected", roomUsers[roomId]);
@@ -110,9 +93,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// Clean up inactive rooms periodically
 setInterval(() => {
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000); 
   Room.deleteMany({ lastActivity: { $lt: cutoff } })
     .then(result => {
       if (result.deletedCount > 0) {
@@ -123,5 +105,5 @@ setInterval(() => {
 }, 12 * 60 * 60 * 1000); 
 
 server.listen(5000, () => {
-  console.log("🚀 Server running on http://localhost:5000");
+  console.log(" Server running on http://localhost:5000");
 });
