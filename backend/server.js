@@ -5,9 +5,7 @@ const { Server } = require("socket.io");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const Room = require("./model/Room");
-
 dotenv.config();
-
 const app = express();
 app.use(cors());
 const server = http.createServer(app);
@@ -21,9 +19,8 @@ const io = new Server(server, {
 
 // Track connected users per room
 const roomUsers = {};
-
 io.on("connection", (socket) => {
-  console.log("✅ User Connected:", socket.id);
+  console.log("User Connected:", socket.id);
 
   socket.on("join-room", async (roomId) => {
     try {

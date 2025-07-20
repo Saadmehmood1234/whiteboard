@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
+import GenerateCode from "../GenerateCode"
 const RoomJoin = ({ onJoin, socket }) => {
   const [inputRoomId, setInputRoomId] = useState("");
 
   const handleJoin = () => {
     if (inputRoomId.trim() !== "") {
       const roomId = inputRoomId.trim();
-      socket.emit("join-room",  roomId );
+      socket.emit("join-room", roomId);
       onJoin(roomId);
     }
   };
 
   const handleCreateRoom = () => {
-    const newRoomId = uuidv4();
-    socket.emit("join-room", newRoomId );
+    const newRoomId = GenerateCode()
+    
+    socket.emit("join-room", newRoomId);
     onJoin(newRoomId);
   };
 
