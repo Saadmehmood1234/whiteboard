@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://whiteboard-one-drab.vercel.app/", 
+    origin: "https://whiteboard-2-1h4v.onrender.com", 
     methods: ["GET", "POST"]
   }
 });
