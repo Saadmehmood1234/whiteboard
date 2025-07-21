@@ -12,23 +12,18 @@ const UserCursors = ({ socket, roomId, users }) => {
       });
     };
 
-    const handleCursorUpdate = (updatedUsers) => {
-      setCursors(updatedUsers.reduce((acc, user) => {
-        if (user.id !== socket.id) { 
-          acc[user.id] = user;
-        }
-        return acc;
-      }, {}));
-    };
-
     window.addEventListener('mousemove', handleMouseMove);
-    socket.on('user-cursors', handleCursorUpdate);
+    setCursors(users.reduce((acc, user) => {
+      if (user.id !== socket.id) {
+        acc[user.id] = user;
+      }
+      return acc;
+    }, {}));
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      socket.off('user-cursors', handleCursorUpdate);
     };
-  }, [socket, roomId]);
+  }, [socket, roomId, users]);
 
   return (
     <>
@@ -46,5 +41,5 @@ const UserCursors = ({ socket, roomId, users }) => {
     </>
   );
 };
-
+ 
 export default UserCursors;

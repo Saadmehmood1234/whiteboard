@@ -8,4 +8,4 @@ export default function GenerateCode() {
     rand -= 1;
   }
   return uniqueId;
-};
+}

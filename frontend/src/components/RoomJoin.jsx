@@ -1,20 +1,36 @@
-import React, { useState } from "react";
-import GenerateCode from "../GenerateCode"
+import React, { useState,useEffect } from "react";
+import GenerateCode from "../GenerateCode";
+
 const RoomJoin = ({ onJoin, socket }) => {
   const [inputRoomId, setInputRoomId] = useState("");
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('whiteboard-username');
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+  }, []);
 
   const handleJoin = () => {
     if (inputRoomId.trim() !== "") {
       const roomId = inputRoomId.trim();
-      socket.emit("join-room", roomId);
+      if (!username) {
+        const newUsername = prompt("Enter your name") || `User-${Math.floor(Math.random() * 1000)}`;
+        localStorage.setItem('whiteboard-username', newUsername);
+        setUsername(newUsername);
+      }
+      socket.emit("join-room", roomId, username);
       onJoin(roomId);
     }
   };
 
   const handleCreateRoom = () => {
-    const newRoomId = GenerateCode()
-    
-    socket.emit("join-room", newRoomId);
+    const newRoomId = GenerateCode();
+    const newUsername = prompt("Enter your name") || `User-${Math.floor(Math.random() * 1000)}`;
+    localStorage.setItem('whiteboard-username', newUsername);
+    setUsername(newUsername);
+    socket.emit("join-room", newRoomId, newUsername);
     onJoin(newRoomId);
   };
 
