@@ -92,6 +92,8 @@ npm start
 http://localhost:5000
 
 
+## Application is live
+https://whiteboard-2-1h4v.onrender.com/
 ## 🌐 Deployment Options
 You can deploy this app on:
 
