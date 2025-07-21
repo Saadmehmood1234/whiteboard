@@ -5,7 +5,7 @@ import UserCursors from "./UserCursors";
 import socket from "../socket";
 import { FiCopy } from "react-icons/fi";
 import { TiTick } from "react-icons/ti";
-import ChatRoom from "./ChatRoom.Jsx";
+import ChatRoom from "./ChatRoom"
 
 const Whiteboard = ({ roomId }) => {
   const [users, setUsers] = useState([]);
