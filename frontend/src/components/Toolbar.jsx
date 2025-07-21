@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEraser, FaPalette, FaBrush, FaChevronDown } from "react-icons/fa";
 
-const Toolbar = ({ socket, color, setColor, width, setWidth, roomId }) => {
+const Toolbar = ({ socket, color, setColor, width, setWidth, roomId,onClearCanvas }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const colors = [
     "#000000", "#FF0000", "#0000FF", "#00FF00", 
@@ -10,6 +10,7 @@ const Toolbar = ({ socket, color, setColor, width, setWidth, roomId }) => {
 
   const clearCanvas = () => {
     if (window.confirm("Are you sure you want to clear the canvas?")) {
+      onClearCanvas();
       socket.emit("clear-canvas", { roomId });
     }
   };

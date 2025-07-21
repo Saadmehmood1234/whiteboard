@@ -38,6 +38,22 @@ const Whiteboard = ({ roomId }) => {
       alert("Failed to copy!");
     }
   };
+  const handleClearCanvas = () => {
+    const canvas = document.querySelector("canvas");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+  useEffect(() => {
+    socket.on("clear-canvas", () => {
+      handleClearCanvas();
+    });
+
+    return () => {
+      socket.off("clear-canvas");
+    };
+  }, []);
   return (
     <div className="relative w-full h-screen bg-gray-100 flex flex-col">
       <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
@@ -76,6 +92,7 @@ const Whiteboard = ({ roomId }) => {
             width={width}
             setWidth={setWidth}
             roomId={roomId}
+            onClearCanvas={handleClearCanvas}
           />
         </div>
         <div className="flex-1 relative bg-white">

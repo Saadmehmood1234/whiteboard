@@ -1,15 +1,26 @@
-import React, { useRef, useEffect } from "react";
+// DrawingCanvas.js (updated)
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 
-const DrawingCanvas = ({ socket, roomId, color, width }) => {
+const DrawingCanvas = forwardRef(({ socket, roomId, color, width }, ref) => {
   const canvasRef = useRef(null);
   const isDrawingRef = useRef(false);
   const lastPositionRef = useRef({ x: 0, y: 0 });
+
+  // Expose clearCanvas function to parent component
+  useImperativeHandle(ref, () => ({
+    clearCanvas: () => {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  }));
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     
-    // Set canvas size to match its display size
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width;
@@ -113,6 +124,6 @@ const DrawingCanvas = ({ socket, roomId, color, width }) => {
       className="absolute top-0 left-0 w-full h-full"
     />
   );
-};
+});
 
 export default DrawingCanvas;
